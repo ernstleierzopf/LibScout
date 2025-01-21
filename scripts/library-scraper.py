@@ -111,7 +111,7 @@ def updateLibraryMvnCentral(libName, category, comment,  groupId, artefactId):
 
     baseDirName = localRepoDir + category + "/" + libName + "/"
     dir = os.path.dirname(baseDirName)
-    make_sure_path_exists(dir);
+    make_sure_path_exists(dir)
 
     # Assemble mvn central search URL and retrieve meta data
     try:
@@ -137,7 +137,7 @@ def updateLibraryMvnCentral(libName, category, comment,  groupId, artefactId):
         for version in data["response"]["docs"]:
 
             if skipAlphaBeta and any(x in version["v"].lower() for x in SKIP_KEYWORDS):
-                continue;
+                continue
 
             # skip lib version if already existing
             if not os.path.isfile(baseDirName + "/" + version["v"] + "/" + LIB_DESCRIPTOR_FILE_NAME):
@@ -171,7 +171,7 @@ def updateLibrary(libName, category, comment, repoURL, groupId, artefactId):
 
     baseDirName = localRepoDir + category + "/" + libName + "/"
     dir = os.path.dirname(baseDirName)
-    make_sure_path_exists(dir);
+    make_sure_path_exists(dir)
 
     # Assemble base URL and retrieve meta data
     try:

@@ -93,6 +93,7 @@ public class Utils {
 	 * @return class name in broken dex bytcode notation (trailing ";" is missing), e.g. "Lcom/motors/myvehicles/GarageInsertActivity"
 	 * @deprecated once this classname notation mess in the dex frontend is fixed
 	 */
+	@Deprecated
 	public static String convertToBrokenDexBytecodeNotation(String className) {
 		if (className == null) return null;
 		return className.startsWith("L")? className : "L" + className.replaceAll("\\.", "/");
@@ -129,6 +130,7 @@ public class Utils {
 	 * @deprecated
 	 */
 	// TODO spaghetti code, to be rewritten
+	@Deprecated
 	public static boolean isFrameworkCall(String methodSignature) {
 		if (methodSignature.startsWith("java.")           ||    // java packages
 			methodSignature.startsWith("Ljava/")           ||    // java packages

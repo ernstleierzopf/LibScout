@@ -1,3 +1,8 @@
 bin
-build
-
+build/*
+!build/libs
+!build/libs/LibScout.jar
+my-lib-repo
+.gradle
+.idea
+defaultApp.log

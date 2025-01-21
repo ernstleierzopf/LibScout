@@ -29,7 +29,7 @@ public class LibraryDescription implements Serializable {
 	// library name
 	public final String name;
 
-	public final LibraryCategory category;
+	public final String category;
 
 	// optional version string
 	public final String version;
@@ -41,11 +41,11 @@ public class LibraryDescription implements Serializable {
 	public final String comment;
 	
 	
-	public static enum LibraryCategory {
-		Advertising, Analytics, Android, /*Tracker,*/ SocialMedia, Cloud, Utilities
-	}
+//	public static enum LibraryCategory {
+//		Advertising, Analytics, Android, /*Tracker,*/ SocialMedia, Cloud, Utilities
+//	}
 	
-	public LibraryDescription(String name, LibraryCategory category, String version, Date date, String comment) {
+	public LibraryDescription(String name, String category, String version, Date date, String comment) {
 		this.name = name;
 		this.category = category;
 		this.version = version;

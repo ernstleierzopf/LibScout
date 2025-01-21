@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.infsec.tpl.profile.LibraryDescription;
-import de.infsec.tpl.profile.LibraryDescription.LibraryCategory;
+//import de.infsec.tpl.profile.LibraryDescription.LibraryCategory;
 
 /**
  * Parser for custom library.xml format (that includes lib meta-data)
@@ -88,13 +88,15 @@ public class XMLParser {
 			// mandatory values
 			String name = element.getElementsByTagName(TAG_NAME).item(0).getTextContent();
 			
-			LibraryCategory category;
+			String category;
 			try {
 				String catStr = element.getElementsByTagName(TAG_CATEGORY).item(0).getTextContent();
-				if (catStr.equals("Social Media") || catStr.equals("Social-Media") || catStr.equals("SocialMedia"))
-					category = LibraryCategory.SocialMedia;
-				else
-					category = LibraryCategory.valueOf(catStr);
+				if (catStr.equals("Social Media") || catStr.equals("Social-Media") || catStr.equals("SocialMedia") || catStr.equals("Social"))
+					category = "SocialMedia";
+				else if (catStr.equals("Advertising and monetization") || catStr.equals("Advertising")) {
+					category = "Advertising";
+				} else
+					category = catStr;
 			} catch (IllegalArgumentException e) {
 				throw new ParseException("Found unknown category: " + element.getElementsByTagName(TAG_CATEGORY).item(0).getTextContent() + "  in file: " + file, -1);
 			}

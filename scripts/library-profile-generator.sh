@@ -26,9 +26,9 @@
 #
 
 # LibScout dir and arguments
-LIBSCOUT_ROOT="<NOTSET>"                      # path to the LibScout root directory
+LIBSCOUT_ROOT="/home/ernst/Documents/git_projects/LibScout"                      # path to the LibScout root directory
 LIBSCOUT="$LIBSCOUT_ROOT/build/libs/LibScout.jar"
-ANDROID_SDK="<NOTSET>"                        # argument: path to Android SDK
+ANDROID_SDK="/home/ernst/Android/Sdk/platforms/android-35/android.jar"                        # argument: path to Android SDK
 
 LOG_DIR=""    # optional argument: enable logging via "-d <log_dir>"
 JOBS=2        # Number of parallel instances
@@ -100,7 +100,55 @@ STARTTIME=$(date +%s)
 
 # run $JOBS instances in parallel
 echo "# `find $LIBDIR -type f -name $LIBXML| wc -l` library.xml files found in $LIBDIR"
-find $LIBDIR -type f -name $LIBXML |  parallel --no-notice --jobs $JOBS "echo \" - gen profile: {//}\" ; java -jar $LIBSCOUT -o profile -m -a $ANDROID_SDK $LOG_DIR -x {} {//}"
+#find $LIBDIR -type f -name $LIBXML -print0 | while IFS= read -r -d '' LIB; do
+  #profile="${LIB/my-lib-repo/profiles}"; profile="${profile/library.xml/""}"; profile=$(echo "$profile" | rev | cut -c2- | sed 's?/?_?' | rev); profile="${profile}.libv"; if [ ! -f "$profile" ]; then echo ""; else echo "profile exists for $LIB. skipping.."; fi
+
+mkdir -p failed_profiling
+doit() {
+    profile=$(echo $1)
+    profile="${profile/my-lib-repo/profiles}"
+    profile="${profile/library.xml/""}"
+    profile=$(echo "$profile" | rev | cut -c1- | sed 's?/?_?' | rev)
+    profile="${profile}.libv"
+    LIBSCOUT="$2"
+    ANDROID_SDK="$3"
+    LOG_DIR="$4"
+    X="$5"
+    fail_path="${1/my-lib-repo/}"
+    fail_path=$(echo "$fail_path" | rev | sed 's?/?_?' | rev)
+    fail_path=$(echo "$fail_path" | cut -c2-)
+    fail_path=failed_profiling/"$fail_path"
+    dirs=$(dirname "$fail_path")
+    mkdir -p "$dirs"
+    if [[ ! -f "$profile" && ! -f "$fail_path" ]]; then
+      echo " - gen profile: $1"
+      java -jar "$LIBSCOUT" -o profile -m -a "$ANDROID_SDK" -d "$LOG_DIR" -x "$X" "$1"
+      if [ ! -f "$profile" ]; then
+        touch "$fail_path"
+      fi
+    else 
+      echo "profile exists for "$1". skipping.."
+    fi
+    json_dir=$(echo $1)
+    json_dir=$(dirname "$json_dir")
+    json_dir="${json_dir/my-lib-repo/json}"
+    fail_path="$(basename "$json_dir")"
+    fail_path=failed_api_analysis/"$fail_path"
+    lock="$(basename "$json_dir").lock"
+    lib_api_package="$(basename "$json_dir").json"
+    lib_api_package="libApis/$lib_api_package"
+    if [[ ! -f "$lib_api_package" && ! -f "$lock" ]]; then
+      touch "$lock"
+      echo " - gen libApis: $1"
+      package=$(dirname "$1")
+      java -jar "$LIBSCOUT" -o lib_api_analysis -j . -a "$ANDROID_SDK" "$package" >> logs.txt
+      rm -rf ./$lock
+    fi
+    
+}
+export -f doit
+rm -rf logs.txt
+find $LIBDIR -type f -name $LIBXML |  parallel --no-notice --jobs $JOBS "doit {//} \"$LIBSCOUT\" \"$ANDROID_SDK\" \"$LOG_DIR\" {}"
 
 ENDTIME=$(date +%s)
 echo
