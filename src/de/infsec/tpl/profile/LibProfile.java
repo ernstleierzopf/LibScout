@@ -65,6 +65,12 @@ public class LibProfile extends Profile implements Serializable {
 	public static class LibProfileComparator implements Comparator<LibProfile> {
 		@Override
 		public int compare(LibProfile p0, LibProfile p1) {
+			if (p0 == null && p1 == null)
+				return 0;
+			if (p0 == null)
+				return -1;
+			if (p1 == null)
+				return 1;
 			if (p0.description.name.equals(p1.description.name)) {
 				try {
 					// Compare by version string according to SemVer rules
