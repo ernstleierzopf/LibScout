@@ -174,6 +174,8 @@ public class LibraryIdentifier {
 		List<ProfileMatch> results = new ArrayList<ProfileMatch>();
 
 		for (LibProfile profile: profiles) {
+			if (profile == null)
+				continue;
 			logger.debug("- Match Library: " + profile);
 			logger.trace("Lib PackageTree:");
 			if (logger.isTraceEnabled()) {
