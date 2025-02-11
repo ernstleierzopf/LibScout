@@ -150,6 +150,8 @@ public class LibraryIdentifier {
 		// fast scan (heuristic) - check if lib root package is in app
 		logger.info("= Scan for library root packages (heuristic) =");
 		for (LibProfile profile: profiles) {
+			if (profile == null)
+				continue;
 			// check if library root package is present in app (for validation purposes)
 			String rootPackage = profile.packageTree.getRootPackage();
 			
