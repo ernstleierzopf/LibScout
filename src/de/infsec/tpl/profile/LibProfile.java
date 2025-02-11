@@ -99,6 +99,8 @@ public class LibProfile extends Profile implements Serializable {
 	public static Map<String,String> getUniqueLibraries(Collection<LibProfile> profiles) {
 		HashMap<String,String> result = new HashMap<String,String>();
 		for (LibProfile p: profiles) {
+			if (p == null)
+				continue;
 			if (!result.containsKey(p.description.name))
 				result.put(p.description.name, p.description.version);
 			else {
